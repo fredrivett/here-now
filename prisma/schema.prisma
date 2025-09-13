@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model PageEvent {
+  id              String   @id @default(cuid())
+  domain          String
+  path            String
+  userId          String   @map("user_id")
+  sessionId       String   @map("session_id")
+  userAgent       String   @map("user_agent")
+  timestamp       DateTime @default(now())
+  metadata        Json?
+  migrationStatus String?  @map("migration_status")
+
+  @@index([domain, timestamp])
+  @@index([domain, userId])
+  @@index([migrationStatus])
+  @@map("page_events")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  domain        String
+  reason        String
+  whitelistedAt DateTime? @map("whitelisted_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@map("users")
+}
