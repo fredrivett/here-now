@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/lib/prisma';
-import { isDomainAllowed } from '@/lib/constants';
+import { prisma } from '../lib/prisma';
+import { isDomainAllowed } from '../lib/constants';
 import { v4 as uuidv4 } from 'uuid';
-import { TrackingRequest } from '@/types';
+import { TrackingRequest } from '../types';
 
 export const trackController = async (req: Request, res: Response) => {
   try {

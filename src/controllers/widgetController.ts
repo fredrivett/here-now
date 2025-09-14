@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ALLOWED_DOMAINS, ACTIVITY_THRESHOLD_MS, getDomainCheckJS } from '@/lib/constants';
+import { ALLOWED_DOMAINS, ACTIVITY_THRESHOLD_MS, getDomainCheckJS } from '../lib/constants';
 
 export const widgetController = async (req: Request, res: Response) => {
   // Get API base URL from environment or request

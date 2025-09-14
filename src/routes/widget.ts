@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { widgetController } from '@/controllers/widgetController';
+import { widgetController } from '../controllers/widgetController';
 
 const router = Router();
 

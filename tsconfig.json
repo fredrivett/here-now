@@ -14,13 +14,7 @@
     "sourceMap": true,
     "incremental": true,
     "declaration": true,
-    "removeComments": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"],
-      "@/lib/*": ["src/lib/*"],
-      "@/types/*": ["src/types/*"]
-    }
+    "removeComments": true
   },
   "include": [
     "src/**/*",

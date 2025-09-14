@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { prisma } from '@/lib/prisma';
-import { isDomainAllowed, ACTIVITY_THRESHOLD_MS } from '@/lib/constants';
-import { StatsResult, QueryResult } from '@/types';
+import { prisma } from '../lib/prisma';
+import { isDomainAllowed, ACTIVITY_THRESHOLD_MS } from '../lib/constants';
+import { StatsResult, QueryResult } from '../types';
 
 // Simple in-memory cache to reduce database load
 const statsCache = new Map<string, { data: StatsResult; timestamp: number }>();

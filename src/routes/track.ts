@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { trackController } from '@/controllers/trackController';
+import { trackController } from '../controllers/trackController';
 
 const router = Router();
 
