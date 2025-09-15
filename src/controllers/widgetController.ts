@@ -3,8 +3,9 @@ import { ACTIVITY_THRESHOLD_MS, getDomainCheckJS } from "../lib/constants.js";
 
 export const widgetController = async (req: Request, res: Response) => {
   // Get API base URL from environment or request
-  const apiBaseUrl =
-    process.env.API_BASE_URL || `${req.protocol}://${req.get("host")}`;
+  const host = req.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  const apiBaseUrl = process.env.API_BASE_URL || `${protocol}://${host}`;
 
   const widgetScript = `
 (function() {
