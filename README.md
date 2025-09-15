@@ -111,6 +111,7 @@ here-now/
 ## 🔌 API Endpoints
 
 ### Track Visitor
+
 ```http
 POST /api/track
 Content-Type: application/json
@@ -124,11 +125,13 @@ Content-Type: application/json
 ```
 
 ### Get Stats
+
 ```http
 GET /api/stats?domain=yourdomain.com&path=/blog/post-1
 ```
 
 Response:
+
 ```json
 {
   "here": 42,
@@ -139,6 +142,7 @@ Response:
 ```
 
 ### Widget Script
+
 ```http
 GET /widget.js
 ```
@@ -158,12 +162,12 @@ The `vercel.json` and `api/index.ts` files handle the serverless configuration.
 
 ## ⚙️ Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | ✅ | PostgreSQL connection string |
-| `DIRECT_URL` | ✅ | Direct database connection (for migrations) |
-| `ALLOWED_DOMAINS` | ✅ | Comma-separated list of allowed domains |
-| `API_BASE_URL` | ❌ | Base URL for widget API calls (auto-detected from request) |
+| Variable          | Required | Description                                                |
+| ----------------- | -------- | ---------------------------------------------------------- |
+| `DATABASE_URL`    | ✅       | PostgreSQL connection string                               |
+| `DIRECT_URL`      | ✅       | Direct database connection (for migrations)                |
+| `ALLOWED_DOMAINS` | ✅       | Comma-separated list of allowed domains                    |
+| `API_BASE_URL`    | ❌       | Base URL for widget API calls (auto-detected from request) |
 
 ## 🤝 Contributing
 

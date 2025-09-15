@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
-import { isDomainAllowed } from '../lib/constants';
-import { v4 as uuidv4 } from 'uuid';
-import { TrackingRequest } from '../types';
+import { Request, Response } from "express";
+import { prisma } from "../lib/prisma.js";
+import { isDomainAllowed } from "../lib/constants.js";
+import { v4 as uuidv4 } from "uuid";
+import { TrackingRequest } from "../types/index.js";
 
 export const trackController = async (req: Request, res: Response) => {
   try {
@@ -28,7 +28,7 @@ export const trackController = async (req: Request, res: Response) => {
       });
     }
 
-    const userAgent = req.headers['user-agent'] || "";
+    const userAgent = req.headers["user-agent"] || "";
 
     // Insert tracking event
     const event = await prisma.pageEvent.create({

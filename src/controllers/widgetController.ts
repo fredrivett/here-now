@@ -1,9 +1,14 @@
-import { Request, Response } from 'express';
-import { ALLOWED_DOMAINS, ACTIVITY_THRESHOLD_MS, getDomainCheckJS } from '../lib/constants';
+import { Request, Response } from "express";
+import {
+  ALLOWED_DOMAINS,
+  ACTIVITY_THRESHOLD_MS,
+  getDomainCheckJS,
+} from "../lib/constants.js";
 
 export const widgetController = async (req: Request, res: Response) => {
   // Get API base URL from environment or request
-  const apiBaseUrl = process.env.API_BASE_URL || `${req.protocol}://${req.get('host')}`;
+  const apiBaseUrl =
+    process.env.API_BASE_URL || `${req.protocol}://${req.get("host")}`;
 
   const widgetScript = `
 (function() {
@@ -453,8 +458,8 @@ export const widgetController = async (req: Request, res: Response) => {
 `;
 
   res.set({
-    'Content-Type': 'application/javascript',
-    'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+    "Content-Type": "application/javascript",
+    "Cache-Control": "public, max-age=3600", // Cache for 1 hour
   });
 
   res.send(widgetScript);

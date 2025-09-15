@@ -5,9 +5,9 @@ export const ACTIVITY_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
 function getAllowedDomains(): string[] {
   const envDomains = process.env.ALLOWED_DOMAINS;
   if (envDomains) {
-    return envDomains.split(',').map(d => d.trim());
+    return envDomains.split(",").map((d) => d.trim());
   }
-  
+
   // Default domains for development
   return ["localhost"];
 }

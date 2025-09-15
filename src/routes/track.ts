@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { trackController } from '../controllers/trackController';
+import { Router } from "express";
+import { trackController } from "../controllers/trackController.js";
 
 const router = Router();
 
-router.post('/', trackController);
+router.post("/", trackController);
 
 export { router as trackRoute };

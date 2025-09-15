@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -16,13 +16,6 @@
     "declaration": true,
     "removeComments": true
   },
-  "include": [
-    "src/**/*",
-    "api/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*", "api/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

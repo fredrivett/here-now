@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { widgetController } from '../controllers/widgetController';
+import { Router } from "express";
+import { widgetController } from "../controllers/widgetController.js";
 
 const router = Router();
 
-router.get('/', widgetController);
+router.get("/", widgetController);
 
 export { router as widgetRoute };
