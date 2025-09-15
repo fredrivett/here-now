@@ -1,6 +1,6 @@
 # here/now — modern simple webpage hit counter
 
-A simple, self-hosted visitor tracking API that shows both real-time and total visitor counts per webpage.
+A simple, self-hosted visitor tracking API that shows both total visitor count and real-time visitor counts per webpage.
 
 Hosted original and example available at [herenow.fyi](https://www.herenow.fyi).
 
@@ -27,6 +27,8 @@ npm install
 ```
 
 ### 2. Set up Database
+
+_You can use any database setup you choose, this guide works with Supabase (postgres)._
 
 Copy the environment variables:
 
@@ -69,10 +71,15 @@ Your API will be available at `http://localhost:3210`
 
 ### 5. Add to Your Website
 
-Add this single line to any webpage:
+Add this single line to any webpage where you wish the widget to display:
 
 ```html
 <div data-herenow></div>
+```
+
+Then include the script before the closing `</body>` tag:
+
+```html
 <script src="http://localhost:3210/widget.js" async></script>
 ```
 
@@ -109,6 +116,8 @@ here-now/
 ```
 
 ## 🔌 API Endpoints
+
+The widget automatically calls these on page load so you don't need to implement them, but these are the API endpoints available:
 
 ### Track Visitor
 
@@ -151,7 +160,9 @@ Returns the JavaScript widget code.
 
 ## ☁️ Vercel Deployment
 
-This project is built for Vercel deployment:
+This project is configured for Vercel deployment, but you can deploy how you wish.
+
+Vercel instructions:
 
 1. Push to GitHub
 2. Connect to Vercel
@@ -171,7 +182,7 @@ The `vercel.json` and `api/index.ts` files handle the serverless configuration.
 
 ## 🤝 Contributing
 
-Contributions welcome! Please read the contributing guidelines and submit pull requests.
+Contributions welcome! Please read our [contributing guidelines](CONTRIBUTING.md) and submit pull requests.
 
 ## 📄 License
 
