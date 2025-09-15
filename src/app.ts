@@ -32,7 +32,7 @@ export const createApp = () => {
         widget: "GET /widget.js",
         health: "GET /health",
       },
-      docs: "https://github.com/your-username/here-now",
+      docs: "https://github.com/fredrivett/here-now",
     });
   });
 
