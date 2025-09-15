@@ -1,6 +1,6 @@
 {
   "name": "here-now",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "A simple, privacy-focused visitor tracking API",
   "main": "dist/server.js",

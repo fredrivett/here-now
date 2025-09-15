@@ -25,7 +25,7 @@ export const createApp = () => {
   app.get("/", (req, res) => {
     res.json({
       name: "here/now analytics API",
-      version: "1.0.0",
+      version: "0.1.0",
       endpoints: {
         track: "POST /api/track",
         stats: "GET /api/stats",
