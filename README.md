@@ -1,6 +1,6 @@
-# here/now — modern simple webpage hit counter
+# <img src="favicon.svg" alt="here/now logo" width="32" height="32" align="absmiddle"> here/now — modern minimal webpage hit counter
 
-A simple, self-hosted visitor tracking API that shows both total visitor count and real-time visitor counts per webpage.
+A minimal, self-hosted visitor tracking API that shows both **total visitor count** and **real-time visitor counts** per webpage.
 
 Hosted original and example available at [herenow.fyi](https://www.herenow.fyi).
 
