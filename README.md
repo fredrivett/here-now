@@ -18,7 +18,40 @@ Keeping a link to [herenow.fyi](https://herenow.fyi) in your implementation is a
 
 ## 🚀 Quick Start
 
-### 1. Clone and Install
+### Option A: Docker (Recommended for Self-Hosting)
+
+The easiest way to self-host here/now is with Docker. This bundles everything you need (app + database) in one command.
+
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) installed on your machine.
+
+```bash
+# Clone the repository
+git clone https://github.com/fredrivett/here-now.git
+cd here-now
+
+# Configure your allowed domains
+cp .env.docker.example .env
+# Edit .env and set ALLOWED_DOMAINS to your domain(s)
+
+# Start everything
+docker compose up -d
+
+# That's it! Your API is running at http://localhost:3210
+```
+
+**Useful Docker commands:**
+```bash
+docker compose logs -f     # View logs
+docker compose down        # Stop the services
+docker compose down -v     # Stop and remove database data
+docker compose up -d --build  # Rebuild after code changes
+```
+
+### Option B: Manual Setup
+
+If you prefer to manage Node.js and PostgreSQL yourself:
+
+#### 1. Clone and Install
 
 ```bash
 git clone https://github.com/fredrivett/here-now.git
@@ -26,7 +59,7 @@ cd here-now
 npm install
 ```
 
-### 2. Set up Database
+#### 2. Set up Database
 
 _You can use any database setup you choose, this guide works with Supabase (postgres)._
 
@@ -53,7 +86,7 @@ npm run db:generate  # Generates types
 npm run db:push      # Creates tables in your database
 ```
 
-### 3. Configure Domains
+#### 3. Configure Domains
 
 Add your allowed domains to `.env`:
 
@@ -61,7 +94,7 @@ Add your allowed domains to `.env`:
 ALLOWED_DOMAINS="localhost,yourdomain.com,yourotherdomain.com"
 ```
 
-### 4. Start the Server
+#### 4. Start the Server
 
 ```bash
 npm run dev
@@ -69,7 +102,7 @@ npm run dev
 
 Your API will be available at `http://localhost:3210`
 
-### 5. Add to Your Website
+#### 5. Add to Your Website
 
 Add this single line to any webpage where you wish the widget to display:
 
