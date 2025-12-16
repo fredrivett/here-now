@@ -5,20 +5,22 @@ services:
       - "3210:3210"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://herenow:herenow@db:5432/herenow
-      - DIRECT_URL=postgresql://herenow:herenow@db:5432/herenow
+      - DATABASE_URL=postgresql://herenow:${POSTGRES_PASSWORD:-herenow}@db:5432/herenow
+      - DIRECT_URL=postgresql://herenow:${POSTGRES_PASSWORD:-herenow}@db:5432/herenow
       - ALLOWED_DOMAINS=${ALLOWED_DOMAINS:-localhost}
       - API_BASE_URL=${API_BASE_URL:-}
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   db:
     image: postgres:16-alpine
     environment:
       - POSTGRES_USER=herenow
-      - POSTGRES_PASSWORD=herenow
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-herenow}
       - POSTGRES_DB=herenow
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -29,13 +31,13 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # Run database migrations on startup
+  # Run database migrations on startup (exits after completion - this is expected)
   migrate:
     build: .
     command: npx prisma db push --skip-generate
     environment:
-      - DATABASE_URL=postgresql://herenow:herenow@db:5432/herenow
-      - DIRECT_URL=postgresql://herenow:herenow@db:5432/herenow
+      - DATABASE_URL=postgresql://herenow:${POSTGRES_PASSWORD:-herenow}@db:5432/herenow
+      - DIRECT_URL=postgresql://herenow:${POSTGRES_PASSWORD:-herenow}@db:5432/herenow
     depends_on:
       db:
         condition: service_healthy

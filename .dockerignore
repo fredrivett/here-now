@@ -36,7 +36,6 @@ coverage
 
 # Documentation
 *.md
-!README.md
 
 # Vercel (not needed for Docker)
 .vercel
