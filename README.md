@@ -156,10 +156,13 @@ here-now/
 │       └── index.ts
 ├── prisma/
 │   └── schema.prisma              # Database schema
+├── Dockerfile                     # Multi-stage Docker build config
+├── docker-compose.yml             # Docker orchestration (app + database)
 ├── package.json
 ├── tsconfig.json
 ├── vercel.json                    # Vercel deployment config
-└── .env.example
+├── .env.example                   # Environment variables for Node.js setup
+└── .env.docker.example            # Environment variables for Docker setup
 ```
 
 ## 🔌 API Endpoints
@@ -234,9 +237,25 @@ The project includes Vercel configuration out of the box (`vercel.json` and `api
 
 ## ⚙️ Environment Variables
 
+### Docker Setup
+
+When using Docker (Option A), configure these in your `.env` file:
+
+| Variable            | Required | Description                                                      |
+| ------------------- | -------- | ---------------------------------------------------------------- |
+| `POSTGRES_PASSWORD` | ✅       | Database password (any password for local, strong for production)|
+| `ALLOWED_DOMAINS`   | ✅       | Comma-separated list of allowed domains                          |
+| `API_BASE_URL`      | ❌       | Base URL for widget API calls (auto-detected from request)       |
+
+Note: `DATABASE_URL` and `DIRECT_URL` are automatically configured by docker-compose.
+
+### Node.js Setup
+
+When using Node.js with an external database (Option B), configure these in your `.env` file:
+
 | Variable          | Required | Description                                                |
 | ----------------- | -------- | ---------------------------------------------------------- |
-| `DATABASE_URL`    | ✅       | PostgreSQL connection string                               |
+| `DATABASE_URL`    | ✅       | PostgreSQL connection string (with pgbouncer for pooling)  |
 | `DIRECT_URL`      | ✅       | Direct database connection (for migrations)                |
 | `ALLOWED_DOMAINS` | ✅       | Comma-separated list of allowed domains                    |
 | `API_BASE_URL`    | ❌       | Base URL for widget API calls (auto-detected from request) |
