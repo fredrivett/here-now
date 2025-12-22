@@ -1,5 +1,7 @@
 # <img src="favicon.svg" alt="here/now logo" width="32" height="32" align="absmiddle"> here/now — modern minimal webpage hit counter
 
+<img width="563" height="237" alt="Screenshot 2025-12-22 at 09 41 29" src="https://github.com/user-attachments/assets/1e535ee3-a91f-452c-bba9-56d4eaca6110" />
+
 A minimal, self-hosted visitor tracking API that shows both **total visitor count** and **real-time visitor counts** per webpage.
 
 Hosted original and example available at [herenow.fyi](https://www.herenow.fyi).
