@@ -29,27 +29,34 @@ The easiest way to self-host here/now is with Docker. This bundles everything yo
 git clone https://github.com/fredrivett/here-now.git
 cd here-now
 
-# Configure your allowed domains
+# Configure environment
 cp .env.docker.example .env
-# Edit .env and set ALLOWED_DOMAINS to your domain(s)
+# Edit .env and set:
+#   POSTGRES_PASSWORD - any password (e.g., "herenow" for local, strong password for production)
+#   ALLOWED_DOMAINS - your domain(s)
 
 # Start everything
 docker compose up -d
 
-# That's it! Your API is running at http://localhost:3210
+# Your API is now running at http://localhost:3210
 ```
 
-**Useful Docker commands:**
+**Deploying to production:** The same Docker setup works on any server with Docker installed (e.g., DigitalOcean, AWS, your own VPS). Just clone, configure `.env` with a strong password and your domain, and run `docker compose up -d`.
+
+**Useful commands:**
 ```bash
-docker compose logs -f     # View logs
-docker compose down        # Stop the services
-docker compose down -v     # Stop and remove database data
+docker compose logs -f        # View logs
+docker compose down           # Stop services
+docker compose down -v        # Stop and remove database data
 docker compose up -d --build  # Rebuild after code changes
 ```
 
-### Option B: Manual Setup
+### Option B: Node.js + External Database
 
-If you prefer to manage Node.js and PostgreSQL yourself:
+Use this option if you want to:
+- Deploy to serverless platforms (Vercel, Netlify, Cloudflare Workers, etc.)
+- Use a managed database service (Supabase, Neon, PlanetScale, Railway, etc.)
+- Run locally for development
 
 #### 1. Clone and Install
 
@@ -102,9 +109,9 @@ npm run dev
 
 Your API will be available at `http://localhost:3210`
 
-#### 5. Add to Your Website
+### Add to Your Website
 
-Add this single line to any webpage where you wish the widget to display:
+Once your server is running (via Docker or local development), add this single line to any webpage where you wish the widget to display:
 
 ```html
 <div data-herenow></div>
@@ -115,6 +122,8 @@ Then include the script before the closing `</body>` tag:
 ```html
 <script src="http://localhost:3210/widget.js" async></script>
 ```
+
+Replace `localhost:3210` with your production URL when deploying.
 
 ## 📁 Project Structure
 
@@ -191,18 +200,24 @@ GET /widget.js
 
 Returns the JavaScript widget code.
 
-## ☁️ Vercel Deployment
+## ☁️ Serverless Deployment
 
-This project is configured for Vercel deployment, but you can deploy how you wish.
+This project works great with serverless platforms. Here are some options:
 
-Vercel instructions:
+### Vercel (recommended for serverless)
 
-1. Push to GitHub
-2. Connect to Vercel
-3. Set environment variables
+The project includes Vercel configuration out of the box (`vercel.json` and `api/index.ts`).
+
+1. Push your code to GitHub
+2. Import the repo in [Vercel](https://vercel.com)
+3. Add environment variables (`DATABASE_URL`, `DIRECT_URL`, `ALLOWED_DOMAINS`)
 4. Deploy
 
-The `vercel.json` and `api/index.ts` files handle the serverless configuration.
+### Other Platforms
+
+**Netlify, Railway, Render:** These platforms can run the Node.js server directly. Set environment variables and use `npm run build && npm start` as your start command.
+
+**Database options:** Any PostgreSQL provider works - [Supabase](https://supabase.com), [Neon](https://neon.tech), [PlanetScale](https://planetscale.com), [Railway](https://railway.app), or your own PostgreSQL instance.
 
 ## ⚙️ Environment Variables
 
