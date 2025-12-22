@@ -34,8 +34,10 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm ci --omit=dev && \
-    npx prisma generate && \
     npm cache clean --force
+
+# Copy Prisma client from builder (avoids regenerating)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist

@@ -55,7 +55,7 @@ docker compose up -d --build  # Rebuild after code changes
 
 Use this option if you want to:
 - Deploy to serverless platforms (Vercel, Netlify, Cloudflare Workers, etc.)
-- Use a managed database service (Supabase, Neon, PlanetScale, Railway, etc.)
+- Use a managed database service (Supabase, Neon, Railway, etc.)
 - Run locally for development
 
 #### 1. Clone and Install
@@ -217,7 +217,7 @@ The project includes Vercel configuration out of the box (`vercel.json` and `api
 
 **Netlify, Railway, Render:** These platforms can run the Node.js server directly. Set environment variables and use `npm run build && npm start` as your start command.
 
-**Database options:** Any PostgreSQL provider works - [Supabase](https://supabase.com), [Neon](https://neon.tech), [PlanetScale](https://planetscale.com), [Railway](https://railway.app), or your own PostgreSQL instance.
+**Database options:** Any PostgreSQL provider works - [Supabase](https://supabase.com), [Neon](https://neon.tech), [Railway](https://railway.app), or your own PostgreSQL instance.
 
 ## ⚙️ Environment Variables
 
