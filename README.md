@@ -33,7 +33,7 @@ cd here-now
 cp .env.docker.example .env
 # Edit .env and set:
 #   POSTGRES_PASSWORD - any password (e.g., "herenow" for local, strong password for production)
-#   ALLOWED_DOMAINS - your domain(s)
+#   ALLOWED_DOMAINS - leave as "localhost" for local development, or set to your domain(s) for production
 
 # Start everything
 docker compose up -d
@@ -44,16 +44,19 @@ docker compose up -d
 **Deploying to production:** The same Docker setup works on any server with Docker installed (e.g., DigitalOcean, AWS, your own VPS). Just clone, configure `.env` with a strong password and your domain, and run `docker compose up -d`.
 
 **Useful commands:**
+
 ```bash
-docker compose logs -f        # View logs
-docker compose down           # Stop services
-docker compose down -v        # Stop and remove database data
-docker compose up -d --build  # Rebuild after code changes
+docker compose logs -f                  # View logs
+docker compose down                     # Stop services
+docker compose down -v                  # Stop and remove database data
+docker compose up -d --build            # Rebuild after code changes
+docker compose exec db psql -U herenow  # Access database directly
 ```
 
 ### Option B: Node.js + External Database
 
 Use this option if you want to:
+
 - Deploy to serverless platforms (Vercel, Netlify, Cloudflare Workers, etc.)
 - Use a managed database service (Supabase, Neon, Railway, etc.)
 - Run locally for development
@@ -199,6 +202,14 @@ GET /widget.js
 ```
 
 Returns the JavaScript widget code.
+
+### Health Check
+
+```http
+GET /health
+```
+
+Returns `{ "status": "ok", "service": "here-now-api" }` - used for health monitoring and Docker healthchecks.
 
 ## ☁️ Serverless Deployment
 
