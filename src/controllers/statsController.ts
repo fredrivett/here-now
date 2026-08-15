@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { isDomainAllowed, ACTIVITY_THRESHOLD_MS } from "../lib/constants.js";
-import { StatsResult, QueryResult } from "../types/index.js";
-
-// Simple in-memory cache to reduce database load
-const statsCache = new Map<string, { data: StatsResult; timestamp: number }>();
-const CACHE_TTL = 30 * 1000; // 30 seconds cache
+import { QueryResult } from "../types/index.js";
+import {
+  currentGeneration,
+  getCachedStats,
+  setCachedStats,
+} from "../lib/statsCache.js";
 
 export const statsController = async (req: Request, res: Response) => {
   const domain = req.query.domain as string;
@@ -33,13 +34,14 @@ export const statsController = async (req: Request, res: Response) => {
     }
 
     // Check cache first to reduce database load
-    const cacheKey = `${domain}:${path}`;
-    const cached = statsCache.get(cacheKey);
-    const now = Date.now();
-
-    if (cached && now - cached.timestamp < CACHE_TTL) {
-      return res.json(cached.data);
+    const cached = getCachedStats(domain, path);
+    if (cached) {
+      return res.json(cached);
     }
+
+    // Capture the cache generation before querying so a visit tracked while
+    // this query is in flight cancels the write-back of this stale result.
+    const generationAtQueryStart = currentGeneration(domain, path);
 
     // Use single raw SQL query for maximum performance with large datasets
     const activityThresholdAgo = new Date(Date.now() - ACTIVITY_THRESHOLD_MS);
@@ -64,21 +66,9 @@ export const statsController = async (req: Request, res: Response) => {
       path,
     };
 
-    // Cache the result to reduce database load
-    statsCache.set(cacheKey, {
-      data: result,
-      timestamp: Date.now(),
-    });
-
-    // Clean up old cache entries periodically
-    if (statsCache.size > 100) {
-      const cutoff = Date.now() - CACHE_TTL * 2;
-      for (const [key, value] of statsCache.entries()) {
-        if (value.timestamp < cutoff) {
-          statsCache.delete(key);
-        }
-      }
-    }
+    // Cache the result to reduce database load (skipped if a visit was tracked
+    // while this query ran, so we never cache a count taken before that visit).
+    setCachedStats(domain, path, result, generationAtQueryStart);
 
     res.json(result);
   } catch (error) {
