@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import { invalidateStats } from "./statsController.js";
+import { invalidateStats } from "../lib/statsCache.js";
 import { isDomainAllowed } from "../lib/constants.js";
 import { v4 as uuidv4 } from "uuid";
 import { TrackingRequest } from "../types/index.js";
