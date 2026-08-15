@@ -7,6 +7,13 @@ import { StatsResult, QueryResult } from "../types/index.js";
 const statsCache = new Map<string, { data: StatsResult; timestamp: number }>();
 const CACHE_TTL = 30 * 1000; // 30 seconds cache
 
+// Invalidate the cached stats for a domain/path so the next read is live.
+// Called after a visit is tracked, otherwise a stale snapshot (taken before
+// the new visit) can hide the visitor and show a count of 0.
+export function invalidateStats(domain: string, path: string): void {
+  statsCache.delete(`${domain}:${path}`);
+}
+
 export const statsController = async (req: Request, res: Response) => {
   const domain = req.query.domain as string;
   const path = req.query.path as string;
