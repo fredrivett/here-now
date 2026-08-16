@@ -3,9 +3,10 @@ import { prisma } from "../lib/prisma.js";
 import { isDomainAllowed, ACTIVITY_THRESHOLD_MS } from "../lib/constants.js";
 import { QueryResult } from "../types/index.js";
 import {
-  currentGeneration,
   getCachedStats,
-  setCachedStats,
+  beginStatsQuery,
+  completeStatsQuery,
+  abortStatsQuery,
 } from "../lib/statsCache.js";
 
 export const statsController = async (req: Request, res: Response) => {
@@ -39,38 +40,44 @@ export const statsController = async (req: Request, res: Response) => {
       return res.json(cached);
     }
 
-    // Capture the cache generation before querying so a visit tracked while
-    // this query is in flight cancels the write-back of this stale result.
-    const generationAtQueryStart = currentGeneration(domain, path);
+    // Register this query as in flight so a visit tracked while it runs
+    // cancels the write-back of its now-stale result.
+    const queryToken = beginStatsQuery(domain, path);
 
-    // Use single raw SQL query for maximum performance with large datasets
-    const activityThresholdAgo = new Date(Date.now() - ACTIVITY_THRESHOLD_MS);
+    try {
+      // Use single raw SQL query for maximum performance with large datasets
+      const activityThresholdAgo = new Date(Date.now() - ACTIVITY_THRESHOLD_MS);
 
-    // Get both counts in a single query to reduce database load and connection usage
-    const queryResult = await prisma.$queryRaw`
-      SELECT 
-        COUNT(DISTINCT user_id) as here_count,
-        COUNT(DISTINCT CASE WHEN timestamp >= ${activityThresholdAgo} THEN user_id END) as now_count
-      FROM page_events 
-      WHERE domain = ${domain} AND path = ${path}
-    `;
+      // Get both counts in a single query to reduce database load and connection usage
+      const queryResult = await prisma.$queryRaw`
+        SELECT
+          COUNT(DISTINCT user_id) as here_count,
+          COUNT(DISTINCT CASE WHEN timestamp >= ${activityThresholdAgo} THEN user_id END) as now_count
+        FROM page_events
+        WHERE domain = ${domain} AND path = ${path}
+      `;
 
-    const queryData = (queryResult as QueryResult[])[0];
-    const here = Number(queryData?.here_count || 0);
-    const nowCount = Number(queryData?.now_count || 0);
+      const queryData = (queryResult as QueryResult[])[0];
+      const here = Number(queryData?.here_count || 0);
+      const nowCount = Number(queryData?.now_count || 0);
 
-    const result = {
-      here,
-      now: nowCount,
-      domain,
-      path,
-    };
+      const result = {
+        here,
+        now: nowCount,
+        domain,
+        path,
+      };
 
-    // Cache the result to reduce database load (skipped if a visit was tracked
-    // while this query ran, so we never cache a count taken before that visit).
-    setCachedStats(domain, path, result, generationAtQueryStart);
+      // Cache the result (skipped if a visit was tracked while this query ran,
+      // so we never cache a count taken before that visit).
+      completeStatsQuery(domain, path, queryToken, result);
 
-    res.json(result);
+      res.json(result);
+    } catch (queryError) {
+      // Stop tracking the in-flight query before the outer handler responds.
+      abortStatsQuery(domain, path, queryToken);
+      throw queryError;
+    }
   } catch (error) {
     console.error("Stats error details:", error);
     console.error("Error stack:", error instanceof Error ? error.stack : error);
