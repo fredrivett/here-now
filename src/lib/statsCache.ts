@@ -57,7 +57,9 @@ export function beginStatsQuery(domain: string, path: string): QueryToken {
 // never accumulates entries for idle paths.
 function releaseToken(key: string, token: QueryToken): void {
   const set = inFlightQueries.get(key);
-  if (!set) return;
+  if (!set) {
+    return;
+  }
   set.delete(token);
   if (set.size === 0) {
     inFlightQueries.delete(key);
