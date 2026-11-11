@@ -21,3 +21,6 @@ dist/
 
 # Vercel
 .vercel
+
+# Amp orb portal state
+.amp/portals/

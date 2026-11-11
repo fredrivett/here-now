@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb: local Postgres, npm dependencies, .env, and the database schema.
+# Safe to run repeatedly; a warm run only confirms that everything is in place.
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+step() {
+  local label=$1 start=$SECONDS
+  shift
+  echo "==> $label"
+  "$@"
+  echo "    $label took $((SECONDS - start))s"
+}
+
+install_postgres() {
+  if ! dpkg -s postgresql >/dev/null 2>&1; then
+    sudo apt-get update -qq
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq postgresql
+  fi
+
+  # Orbs are disposable, so trade durability for speed.
+  local conf_dir conf
+  for conf_dir in /etc/postgresql/*/main/conf.d; do
+    conf="$conf_dir/amp-orb.conf"
+    if [ ! -f "$conf" ]; then
+      printf 'fsync = off\nsynchronous_commit = off\nfull_page_writes = off\n' | sudo tee "$conf" >/dev/null
+      sudo systemctl restart postgresql
+    fi
+  done
+
+  # systemd owns Postgres, so it starts again in every orb restored from the snapshot.
+  sudo systemctl enable --now postgresql
+}
+
+create_database() {
+  local i
+  for i in $(seq 30); do
+    sudo -u postgres pg_isready -q && break
+    sleep 1
+  done
+  if [ -z "$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = 'herenow'")" ]; then
+    sudo -u postgres psql -qc "CREATE ROLE herenow LOGIN PASSWORD 'herenow' CREATEDB"
+  fi
+  if [ -z "$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname = 'herenow'")" ]; then
+    sudo -u postgres createdb -O herenow herenow
+  fi
+}
+
+write_env() {
+  if [ -f .env ]; then
+    return
+  fi
+  local url="postgresql://herenow:herenow@localhost:5432/herenow"
+  sed -e "s|^DATABASE_URL=.*|DATABASE_URL=\"$url\"|" \
+    -e "s|^DIRECT_URL=.*|DIRECT_URL=\"$url\"|" \
+    -e 's|^# Database (Supabase)|# Database (local Postgres in the Amp orb)|' \
+    .env.example >.env
+}
+
+# npm install respects package-lock.json and is a ~1s no-op when node_modules is current,
+# unlike npm ci, which always reinstalls. postinstall runs prisma generate.
+step "Install Postgres" install_postgres
+step "Create herenow database" create_database
+step "Install npm dependencies" npm install --no-audit --no-fund
+step "Write .env" write_env
+step "Push Prisma schema" npx prisma db push --skip-generate

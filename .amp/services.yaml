@@ -1,0 +1,7 @@
+services:
+  api:
+    command: npm run dev
+    health: /health
+    portal:
+      title: here/now API
+      description: Express API with live reload. /widget.js serves the widget; data goes to the orb's local Postgres.
