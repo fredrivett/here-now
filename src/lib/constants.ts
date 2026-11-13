@@ -1,5 +1,9 @@
-// Activity threshold - used for both heartbeat interval and "now" window
+// Activity threshold - the "now" window: visits within it count as "now"
 export const ACTIVITY_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+
+// Widget heartbeat - well inside the "now" window so latency and browser timer
+// throttling can't let a visible visitor expire before the next heartbeat
+export const HEARTBEAT_INTERVAL_MS = (ACTIVITY_THRESHOLD_MS * 4) / 5; // 4 minutes
 
 // Domain whitelist - configurable via environment variable
 function getAllowedDomains(): string[] {

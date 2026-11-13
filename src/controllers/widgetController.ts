@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ACTIVITY_THRESHOLD_MS, getDomainCheckJS } from "../lib/constants.js";
+import { HEARTBEAT_INTERVAL_MS, getDomainCheckJS } from "../lib/constants.js";
 
 export const widgetController = async (req: Request, res: Response) => {
   // Get API base URL from environment or request
@@ -104,7 +104,15 @@ export const widgetController = async (req: Request, res: Response) => {
   
   // Activity tracking
   let lastActivity = 0;
-  const ACTIVITY_THRESHOLD = ${ACTIVITY_THRESHOLD_MS};
+  let heartbeatTimer = null;
+  const HEARTBEAT_INTERVAL = ${HEARTBEAT_INTERVAL_MS};
+
+  // (Re)start the heartbeat so the next one is due one interval after the
+  // latest visit, whatever sent it
+  function startHeartbeat() {
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = setInterval(sendActivityUpdate, HEARTBEAT_INTERVAL);
+  }
 
   // Track page visit
   async function trackVisit() {
@@ -130,6 +138,7 @@ export const widgetController = async (req: Request, res: Response) => {
         const result = await response.json();
         log('Visit tracked successfully:', result);
         lastActivity = Date.now();
+        startHeartbeat();
       }
     } catch (err) {
       error('Tracking failed:', err);
@@ -160,11 +169,13 @@ export const widgetController = async (req: Request, res: Response) => {
   function handleVisibilityChange() {
     if (!document.hidden) {
       const timeSinceLastActivity = Date.now() - lastActivity;
-      if (timeSinceLastActivity >= ACTIVITY_THRESHOLD) {
+      if (timeSinceLastActivity >= HEARTBEAT_INTERVAL) {
         log('User returned to tab after', Math.round(timeSinceLastActivity / 1000 / 60), 'minutes');
         sendActivityUpdate();
       } else {
-        log('User returned to tab, but recent activity exists - skipping');
+        // Still counted as "now", but the shown count may be from while we were away
+        log('User returned to tab, recent activity exists - refreshing stats');
+        fetchStats().then(updateWidgetNumbers);
       }
     }
   }
@@ -402,13 +413,13 @@ export const widgetController = async (req: Request, res: Response) => {
     // Set up activity tracking
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
-    // Send heartbeat every 5 minutes (only if user is visible)
-    setInterval(() => {
-      sendActivityUpdate();
-    }, ACTIVITY_THRESHOLD);
+    // Send heartbeat every HEARTBEAT_INTERVAL (only if user is visible); also
+    // started by each successful visit, so this covers a failed first visit
+    startHeartbeat();
 
-    // Update stats every 30 seconds
+    // Update stats every 30 seconds while the tab is visible
     setInterval(async () => {
+      if (document.hidden) return;
       currentStats = await fetchStats();
       updateWidget(currentStats);
     }, 30000);
