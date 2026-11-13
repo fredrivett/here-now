@@ -1,8 +1,7 @@
 services:
   api:
-    # .env (written by .agents/setup) holds DATABASE_URL; npm run dev doesn't load it.
-    # Same as the dev script, plus Node's dotenv parser (orbs run Node >= 20.6).
-    command: npx tsx watch --env-file=.env src/server.ts
+    # Loads .env (written by .agents/setup), which holds DATABASE_URL.
+    command: npm run dev
     # Matches API_BASE_URL in .env, which widget.js sends its requests to.
     port: 3210
     health: /health

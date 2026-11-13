@@ -13,7 +13,7 @@ Thanks for your interest in contributing to here/now! This document provides gui
 ## Development Setup
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 20.6+ (`npm run dev` loads `.env` with Node's `--env-file`)
 - A Supabase database (or compatible PostgreSQL database)
 
 ### Environment Setup
