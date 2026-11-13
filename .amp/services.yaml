@@ -1,7 +1,7 @@
 services:
   api:
     # .env (written by .agents/setup) holds DATABASE_URL; npm run dev doesn't load it.
-    command: npx tsx watch --env-file=.env src/server.ts
+    command: sh -c 'set -a; . ./.env; set +a; exec npm run dev'
     # Matches API_BASE_URL in .env, which widget.js sends its requests to.
     port: 3210
     health: /health
